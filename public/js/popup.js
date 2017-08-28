@@ -1,14 +1,14 @@
 /*global chrome*/
 let _timer;
 
-jQuery.fn.getObjectText = function() {
+jQuery.fn.getObjectText = function () {
     if (jQuery('a', this).length === 1) {
         return jQuery('a', this).text().replace(/(\r\n|\n|\r|\s\s+)/gm, ' ').trim();
     }
     return this.text().replace(/(\r\n|\n|\r|\s\s+)/gm, ' ').trim();
 };
 
-String.prototype.queryParams = function() {
+String.prototype.queryParams = function () {
     const str = this.indexOf('?') === 0 ? this.slice(1) : this;
     let result = {};
     str.split('&').map(p => {
@@ -26,6 +26,7 @@ const helpers = {
     website: '',
     shopId: '',
     product_id: '',
+    config: {},
     init(j) {
         this.j = j;
 
@@ -33,10 +34,132 @@ const helpers = {
         _timer = setTimeout(() => {
             alert('Ok!!!!');
 
-            this.getConfigs(this.exec.bind(this));
+            this.getConfigs(this.execv2.bind(this));
 
             clearTimeout(_timer);
         }, 300);
+    },
+    bindData(e) {
+        const {j, config} = this;
+        let skuText = [];
+        const wrap = j(config.selector.wrap);
+
+        j(config.selector.selectedClass, wrap).each(function () {
+            const t = j(this).getObjectText();
+            skuText.push(t);
+        });
+
+        const btn = j('.my-order-button', wrap);
+
+        if (skuText.length === j(config.selector.skuRows, wrap).length) {
+            // validated -> add to session
+            const skuSelected = skuText.join('>');
+            this.cart['cart'][skuSelected] = parseInt(j(config.selector.cartControl.input, wrap).val());
+
+            if (j(config.selector.cartControl.denied, wrap).length > 0) {
+                btn.addClass('disabled');
+            } else {
+                btn.removeClass('disabled');
+            }
+
+            console.log(this.cart);
+        }
+    },
+    skuMapper() {
+        const c = this.config.selector;
+        const j = this.j;
+        let wrap = j(c.wrap);
+        let skuRows = {};
+        j(c.skuRows, wrap).each(function (e) {
+            const row = j(this);
+            const group = j(c.skuGroup, row).text().trim();
+            if (group.length > 0) {
+                let rowProperties;
+                if (j(c.skuRows, wrap).length === c.skuProperties.length) {
+                    rowProperties = c.skuProperties[e] || c.skuProperties[0];
+                } else {
+                    rowProperties = c.skuProperties[c.skuProperties.length - 1];
+                }
+                let skuItems = {};
+                j(rowProperties.list, row).each(function (n) {
+                    if (rowProperties.object && rowProperties.attributes) {
+                        // Get by attribute data
+                        const obj = rowProperties.object === 'this' ? j(this) :
+                            j(rowProperties.object, j(this));
+
+                        // attribute primary key
+                        const attrKey = Object.keys(rowProperties.attributes)[0];
+                        const attrValues = rowProperties.attributes[attrKey];
+                        let data = obj.data(attrKey);
+                        let name = '';
+                        attrValues.map((attr, index) => {
+                            if (index === 0) {
+                                // name attribute
+                                name = data[attr] || '';
+                            } else {
+                                // extends attribute
+                                if (obj.data(attr)) {
+                                    data[attr] = obj.data(attr);
+                                }
+                            }
+                        });
+                        if (name.length > 0) {
+                            skuItems[name] = data;
+                        }
+                    } else {
+                        const obj = j(this);
+                        let value = obj.text().replace(/(\r\n|\n|\r|\s{2,})/gm, ' ').trim();
+
+                        let images = {};
+                        // get by inner text
+                        // if (rowProperties.images) {
+                        //     const img = j(rowProperties.images[0], obj);
+                        //     if (img.length === 1) {
+                        //         const rules = rowProperties.images[1].split(':');
+                        //         const match = rules[1];
+                        //         switch (rules[0]) {
+                        //             case 'style':
+                        //                 try {
+                        //                     const styles = img.css();
+                        //                     if (styles[match[1]]) {
+                        //                         images = {
+                        //                             original: styles[match[1]]
+                        //                                 .replace(/(?:^url\(["']?|["']?\)$)/g, "")
+                        //                         };
+                        //                     }
+                        //                 } catch (e) {
+                        //
+                        //                 }
+                        //                 break;
+                        //         }
+                        //     }
+                        // }
+
+                        skuItems[value] = {name: value, images: images};
+                    }
+                });
+                skuRows[group] = skuItems;
+            }
+        });
+        return skuRows;
+    },
+    execv2() {
+        this.cart.sku = this.skuMapper();
+        // order
+        const {j, config} = this;
+
+        const wrap = j(config.selector.wrap);
+
+        j(config.selector.cartControl.control, wrap).on('click', this.bindData.bind(this));
+
+        j(config.selector.btnOrder, wrap)
+            .attr('class', 'remove-default-class')
+            .css({position: 'relative', display: 'inline-block'})
+            .append('<button class="my-order-button">Đặt hàng ngay</button>');
+        j('.my-order-button:not(.disabled)', wrap).on('click', this.bindData.bind(this));
+
+
+        j(config.selector.cartControl.input, wrap).on('change', this.bindData.bind(this))
     },
     exec(config) {
         const j = this.j;
@@ -121,7 +244,7 @@ const helpers = {
 
             j(c.cartControl.control, wrap).on('click', () => {
                 let skuText = [];
-                j(c.selectedClass, wrap).each(function() {
+                j(c.selectedClass, wrap).each(function () {
                     const t = j(this).getObjectText();
                     skuText.push(t);
                 });
@@ -132,20 +255,32 @@ const helpers = {
                 }
             });
 
+            j(c.cartControl.input, wrap).on('change blur', () => {
+                console.log(123);
+
+            });
+
             j(c.btnOrder).on('click', this.order.bind(this))
         }
     },
     updateCart(key, value) {
 
     },
-    getConfigs(callback) {
+    getConfigs(cb) {
         const p = new Promise((resolve, reject) => {
             const domain = this.getCurrentDomain();
             this.j && this.j.getJSON(chrome.extension.getURL('/js/config.json'), config => {
-                resolve(config[domain.domain] || false);
+                if (config[domain.domain]) {
+                    resolve(config[domain.domain]);
+                } else {
+                    reject('Config not found.');
+                }
             });
         });
-        p.then(config => callback(config));
+        p.then(config => {
+            this.config = config;
+            if (typeof cb === 'function') cb();
+        });
     },
     getProductId() {
         const url = new URL(window.location.toString());

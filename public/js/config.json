@@ -27,9 +27,10 @@
       ],
       "cartControl": {
         "control": ".unit-detail-amount-control > a",
-        "input": ".amount-input"
+        "input": ".amount-input",
+        "denied": ".noPost"
       },
-      "btnOrder": ".unit-detail-order-action > a",
+      "btnOrder": ".unit-detail-order-action",
       "selectedClass": ".active",
       "shopLink": ".smt-info > .header > a"
     }
@@ -49,9 +50,10 @@
       ],
       "cartControl": {
         "control": ".tb-amount-widget > span",
-        "input": ".tb-text"
+        "input": ".tb-text",
+        "denied": ".noPost"
       },
-      "btnOrder": ".tb-action a",
+      "btnOrder": ".tb-action",
       "selectedClass": ".tb-selected",
       "shopLink": ".shopLink"
     }

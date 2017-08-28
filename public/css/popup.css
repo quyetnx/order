@@ -1,0 +1,19 @@
+.my-order-button {
+    padding: 10px;
+    width: 100%;
+    cursor: pointer;
+    background-color: #c40000;
+    color: #ffffff;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    border: none;
+    text-transform: uppercase;
+}
+
+.my-order-button.disabled {
+    cursor: not-allowed;
+    background-color: #a8a8a8;
+}
