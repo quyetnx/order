@@ -1,0 +1,59 @@
+{
+  "1688": {
+    "selector": {
+      "wrap": ".mod-detail-purchasing",
+      "skuRows": ".obj-leading, .obj-sku",
+      "skuGroup": ".obj-title",
+      "skuProperties": [
+        {
+          "list": ".list-leading > li",
+          "object": ".unit-detail-spec-operator",
+          "attributes": {
+            "unitConfig": [
+              "name",
+              "imgs"
+            ]
+          }
+        },
+        {
+          "list": ".table-sku > tbody > tr",
+          "object": "this",
+          "attributes": {
+            "skuConfig": [
+              "skuName"
+            ]
+          }
+        }
+      ],
+      "cartControl": {
+        "control": ".unit-detail-amount-control > a",
+        "input": ".amount-input"
+      },
+      "btnOrder": ".unit-detail-order-action > a",
+      "selectedClass": ".active",
+      "shopLink": ".smt-info > .header > a"
+    }
+  },
+  "tmall": {
+    "selector": {
+      "wrap": ".tb-sku",
+      "skuRows": ".tb-prop.tm-sale-prop",
+      "skuGroup": ".tb-metatit",
+      "skuProperties": [
+        {
+          "list": "ul > li",
+          "object": null,
+          "attributes": null,
+          "images": ["a", "style:background"]
+        }
+      ],
+      "cartControl": {
+        "control": ".tb-amount-widget > span",
+        "input": ".tb-text"
+      },
+      "btnOrder": ".tb-action a",
+      "selectedClass": ".tb-selected",
+      "shopLink": ".shopLink"
+    }
+  }
+}

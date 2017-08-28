@@ -22,12 +22,15 @@
     {
       "matches": [
         "http://detail.1688.com/offer/*",
-        "https://detail.1688.com/offer/*"
+        "https://detail.1688.com/offer/*",
+        "http://*.tmall.com/item*",
+        "https://*.tmall.com/item*"
       ],
       "js": [
         "js/jquery-3.2.1.min.js",
         "js/popup.js"
       ]
     }
-  ]
+  ],
+  "web_accessible_resources": ["js/config.json"]
 }
