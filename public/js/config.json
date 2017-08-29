@@ -3,6 +3,11 @@
     "selector": {
       "wrap": ".mod-detail-purchasing",
       "skuRows": ".obj-leading, .obj-sku",
+      "product": {
+        "link": "",
+        "image": "",
+        "price": ""
+      },
       "skuGroup": ".obj-title",
       "skuProperties": [
         {
@@ -39,6 +44,14 @@
     "selector": {
       "wrap": ".tb-sku",
       "skuRows": ".tb-prop.tm-sale-prop",
+      "product": {
+        "link": {
+          "target": ".tb-detail-hd > h1 > a",
+          "params": "id"
+        },
+        "image": "#J_ImgBooth",
+        "price": ".tm-price"
+      },
       "skuGroup": ".tb-metatit",
       "skuProperties": [
         {
@@ -55,7 +68,7 @@
       },
       "btnOrder": ".tb-action",
       "selectedClass": ".tb-selected",
-      "shopLink": ".shopLink"
+      "shopLink": ".slogo-shopname"
     }
   }
 }

@@ -23,8 +23,7 @@
       "matches": [
         "http://detail.1688.com/offer/*",
         "https://detail.1688.com/offer/*",
-        "*://*.tmall.com/*",
-        "*://*.tmall.hk/hk/*"
+        "https://detail.tmall.com/*"
       ],
       "js": [
         "js/jquery-3.2.1.min.js",
